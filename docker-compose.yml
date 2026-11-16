@@ -1,0 +1,61 @@
+# =====================================================================
+# AirOpale - environnement de développement du module R3.01.
+#
+# Trois services, et rien d'autre à installer sur votre poste :
+#   web     : Apache + PHP 8.3, c'est lui qui exécute Symfony
+#   db      : la base MySQL
+#   adminer : l'interface web pour regarder la base
+#
+# Pour démarrer :  docker compose up -d --build
+# =====================================================================
+services:
+
+  web:
+    build: ./docker/php
+    container_name: airopale-web
+    ports:
+      # À GAUCHE votre machine, à DROITE l'intérieur du conteneur.
+      - "8080:80"
+    volumes:
+      # Tout le projet est monté : vous éditez sous VS Code,
+      # le conteneur voit la modification immédiatement.
+      - ./:/var/www/html
+    depends_on:
+      # web attend que la base RÉPONDE, pas seulement qu'elle soit lancée.
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.4
+    container_name: airopale-db
+    ports:
+      # Pour un outil SQL de votre machine uniquement.
+      # Depuis Symfony (dans le conteneur), la base est db:3306.
+      - "13306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: airopale
+      MYSQL_USER: airopale
+      MYSQL_PASSWORD: airopale
+      TZ: Europe/Paris
+    volumes:
+      # La base est VIDE au départ : ce sont les migrations de Doctrine
+      # qui créent les tables. Pour repartir de zéro : docker compose down -v
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uairopale", "-pairopale"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 40s
+
+  adminer:
+    image: adminer:latest
+    container_name: airopale-adminer
+    ports:
+      - "8081:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:

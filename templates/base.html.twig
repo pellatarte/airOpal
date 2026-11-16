@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}AirOpale{% endblock %}</title>
+        <link rel="stylesheet" href="/css/style.css">
+    </head>
+    <body>
+        <header>
+            <a class="logo" href="{{ path('accueil') }}">AirOpale</a>
+            <nav>
+                {% block menu %}
+                    <a href="{{ path('accueil') }}">Accueil</a>
+                {% endblock %}
+            </nav>
+        </header>
+
+        <main>
+            {# Les messages « flash » : déposés par un contrôleur avant une
+               redirection, affichés une fois sur la page suivante, puis oubliés. #}
+            {% for type, messages in app.flashes %}
+                {% for message in messages %}
+                    <p class="flash flash-{{ type }}">{{ message }}</p>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+
+            {# Fourni : la carte de la liste et de l'ajout d'une ville (voir _carte.html.twig). #}
+            {{ include('_carte.html.twig') }}
+        </main>
+
+        <footer>
+            Données : <a href="https://open-meteo.com/">Open-Meteo.com</a> (CC BY 4.0)
+            · R3.01 — IUT du Littoral Côte d'Opale
+        </footer>
+    </body>
+</html>

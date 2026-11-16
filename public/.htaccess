@@ -1,0 +1,16 @@
+# Toute adresse qui ne correspond pas à un vrai fichier de public/
+# (une image, la feuille de style…) est confiée au front controller
+# de Symfony, index.php. C'est lui qui choisit la route.
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Un vrai fichier ou un vrai dossier : Apache le sert directement.
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Tout le reste : index.php.
+    RewriteRule ^ index.php [L]
+</IfModule>

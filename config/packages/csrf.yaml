@@ -1,0 +1,8 @@
+# Protection CSRF : un jeton secret, rangé en session, recopié dans chaque
+# formulaire. C'est ce que vous avez codé à la main en séance 4 ; ici, le
+# composant Form l'ajoute et le vérifie tout seul.
+framework:
+    csrf_protection: true
+    form:
+        csrf_protection:
+            enabled: true

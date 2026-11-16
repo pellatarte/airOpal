@@ -1,0 +1,102 @@
+/* AirOpale — feuille de style fournie. Vous n'avez pas à la modifier.
+   Les classes utiles au TP sont regroupées en bas : .badge-*, .carte,
+   .flash-*, .erreur, table. */
+
+:root {
+    --teal-fonce: #08313A;
+    --teal: #028090;
+    --vert-mer: #00A896;
+    --menthe: #02C39A;
+    --fond: #F4F8F8;
+    --texte: #1C2B2E;
+    --gris: #6B7B7E;
+}
+
+* { box-sizing: border-box; }
+
+body {
+    margin: 0;
+    font-family: Calibri, "Segoe UI", Arial, sans-serif;
+    color: var(--texte);
+    background: var(--fond);
+    line-height: 1.5;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding: 0.8rem 2rem;
+    background: var(--teal-fonce);
+}
+header a { color: #fff; text-decoration: none; }
+header .logo { font-family: Cambria, Georgia, serif; font-size: 1.5rem; font-weight: bold; }
+header nav { display: flex; gap: 1.2rem; }
+header nav a:hover { color: var(--menthe); }
+
+main { max-width: 60rem; margin: 2rem auto; padding: 0 1.5rem; }
+
+h1, h2 { font-family: Cambria, Georgia, serif; color: var(--teal-fonce); }
+a { color: var(--teal); }
+
+.intro { font-size: 1.15rem; color: var(--gris); }
+.ok { padding: 0.8rem 1rem; background: #E3F6EF; border-left: 4px solid var(--menthe); }
+.discret { color: var(--gris); font-size: 0.9rem; }
+
+footer {
+    max-width: 60rem; margin: 3rem auto 1rem; padding: 0 1.5rem;
+    font-size: 0.85rem; color: var(--gris);
+}
+
+/* --- Tableaux ------------------------------------------------------ */
+table { border-collapse: collapse; width: 100%; background: #fff; }
+th, td { padding: 0.5rem 0.8rem; border-bottom: 1px solid #DDE6E7; text-align: left; }
+th { background: #E6F2F3; color: var(--teal-fonce); }
+
+/* --- Cartes de la fiche d'une ville -------------------------------- */
+.cartes { display: flex; flex-wrap: wrap; gap: 1rem; margin: 1rem 0; }
+.carte {
+    flex: 1 1 16rem;
+    padding: 1rem 1.2rem;
+    background: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 3px rgba(8, 49, 58, 0.15);
+}
+.carte h2 { margin-top: 0; font-size: 1.2rem; }
+.carte .grand { font-size: 2rem; font-weight: bold; color: var(--teal-fonce); }
+
+/* --- Badges de qualité de l'air (indice européen) ------------------ */
+.badge {
+    display: inline-block;
+    padding: 0.15rem 0.6rem;
+    border-radius: 1rem;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+.badge-bon                  { background: #50F0E6; color: #08313A; }
+.badge-correct              { background: #50CCAA; color: #08313A; }
+.badge-moyen                { background: #F0E641; color: #08313A; }
+.badge-mediocre             { background: #FF5050; color: #fff; }
+.badge-tres-mediocre        { background: #960032; color: #fff; }
+.badge-extremement-mediocre { background: #7D2181; color: #fff; }
+
+/* --- Messages ------------------------------------------------------ */
+.flash { padding: 0.7rem 1rem; border-radius: 4px; }
+.flash-succes { background: #E3F6EF; border-left: 4px solid var(--menthe); }
+.flash-erreur, .erreur { background: #FDECEC; border-left: 4px solid #C0392B; padding: 0.7rem 1rem; }
+
+/* --- Formulaires --------------------------------------------------- */
+form div { margin-bottom: 0.9rem; }
+label { display: block; font-weight: bold; margin-bottom: 0.2rem; }
+input[type=text], input[type=number] {
+    width: 100%; max-width: 24rem; padding: 0.45rem; border: 1px solid #B8C7C9; border-radius: 4px;
+}
+form ul { margin: 0.2rem 0; padding-left: 1.2rem; color: #C0392B; }
+button, .bouton {
+    display: inline-block;
+    padding: 0.5rem 1.1rem;
+    background: var(--teal); color: #fff;
+    border: none; border-radius: 4px;
+    font-size: 1rem; cursor: pointer; text-decoration: none;
+}
+button:hover, .bouton:hover { background: var(--vert-mer); }

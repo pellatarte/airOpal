@@ -1,0 +1,76 @@
+{#
+    FOURNI — la carte OpenStreetMap. Rien à écrire, rien à modifier.
+
+    base.html.twig l'inclut sur chaque page ; elle ne s'affiche que sur deux routes :
+      - ville_liste    : un repère par ville, cliquable vers sa fiche ;
+      - ville_nouvelle : un clic sur la carte remplit la latitude et la longitude du formulaire.
+
+    Les repères viennent de la variable `villes` du gabarit de la liste : un gabarit enfant
+    partage ses variables avec base.html.twig, et donc avec ce fichier.
+
+    La carte utilise Leaflet (une bibliothèque JavaScript, hors programme du module) et les
+    tuiles d'OpenStreetMap, chargées par le NAVIGATEUR : le serveur n'exécute rien. Sans réseau,
+    la carte reste vide et le reste de la page fonctionne.
+#}
+{% set route = app.request.attributes.get('_route') %}
+{% if route in ['ville_liste', 'ville_nouvelle'] %}
+    {% set points = [] %}
+    {% for v in villes ?? [] %}
+        {% set points = points|merge([{nom: v.nom, lat: v.latitude, lon: v.longitude, url: '/villes/' ~ v.id}]) %}
+    {% endfor %}
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+          integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+
+    <section class="carte">
+        <div id="carte" style="height: 380px; border-radius: 8px;"
+             data-points="{{ points|json_encode }}" data-ajout="{{ route == 'ville_nouvelle' ? 'oui' : 'non' }}"></div>
+        {% if route == 'ville_nouvelle' %}
+            <p class="discret">Cliquez sur la carte : la latitude et la longitude se remplissent.</p>
+        {% endif %}
+    </section>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        (function () {
+            var div = document.getElementById('carte');
+            if (!window.L) {
+                div.style.height = 'auto';
+                div.textContent = 'Carte indisponible : pas de réseau.';
+                return;
+            }
+
+            // Centrée sur la Côte d'Opale.
+            var carte = L.map(div).setView([50.75, 2.1], 9);
+            L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                maxZoom: 18,
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+            }).addTo(carte);
+
+            // Un repère par ville. Le nom passe par textContent : jamais interprété comme du HTML.
+            var reperes = [];
+            JSON.parse(div.dataset.points).forEach(function (p) {
+                var lien = document.createElement('a');
+                lien.href = p.url;
+                lien.textContent = p.nom;
+                reperes.push(L.marker([p.lat, p.lon]).addTo(carte).bindPopup(lien));
+            });
+            if (reperes.length > 1) {
+                carte.fitBounds(L.featureGroup(reperes).getBounds().pad(0.2));
+            }
+
+            // Page d'ajout : un clic remplit les champs du formulaire (VilleType → ville_latitude, ville_longitude).
+            if (div.dataset.ajout === 'oui') {
+                var latitude = document.getElementById('ville_latitude');
+                var longitude = document.getElementById('ville_longitude');
+                var choisi = null;
+                carte.on('click', function (e) {
+                    if (latitude) { latitude.value = e.latlng.lat.toFixed(4); }
+                    if (longitude) { longitude.value = e.latlng.lng.toFixed(4); }
+                    if (choisi) { choisi.setLatLng(e.latlng); } else { choisi = L.marker(e.latlng).addTo(carte); }
+                });
+            }
+        })();
+    </script>
+{% endif %}
